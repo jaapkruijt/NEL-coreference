@@ -1,9 +1,10 @@
-prefix grasp: <http://groundedannotationframework.org/grasp#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix gaf: <http://groundedannotationframework.org/gaf#>.
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 select ?ent (COUNT(DISTINCT ?l) as ?num_mentions) where{
     ?ent rdfs:label %s
-    ?l grasp:denotedBy ?e
+    ?l gaf:denotedBy ?e
 
-
+group by ?ent
+    order by DESC(COUNT(DISTINCT ?l))
 }

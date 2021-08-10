@@ -14,6 +14,14 @@ Upon encountering NE do:
     5) Add URI to Annotation
 """
 
+from rdflib import Namespace, Graph, Literal
+from rdflib.namespace import RDFS
+from make_data_and_query import make_fake_data, query_data
+
+
+
+
+
 
 
 
