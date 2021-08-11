@@ -1,22 +1,8 @@
-"""
-Upon encountering NE do:
-1) select NE token text as name
-2) Query brain to find URI's with name (entities_with_label.rq)
-3) if multiple URI's found:
-    4) Query brain to count number of denotedBy links for each URI
-    5) Rank URI's by number of links
-    6) Select highest ranking URI
-    7) Add URI to Annotation
-3) if one URI found:
-    4) Add URI to Annotation
-3) if no URI's found:
-    4) Add URI to brain
-    5) Add URI to Annotation
-"""
 
 from rdflib import Namespace, Graph, Literal
 from rdflib.namespace import RDFS
 
+# TODO: change instances to dates
 def make_fake_data():
     gaf = Namespace('http://groundedannotationframework.org/gaf#')
     leo = Namespace('http://cltl.nl/leolani/world/')
@@ -41,6 +27,8 @@ def make_fake_data():
     g.add((tae, gaf.denotedBy, instance_2))
     return g
 
+
+# TODO: change query to take in string
 def query_data(graph):
     q = """
         prefix gaf: <http://groundedannotationframework.org/gaf#>
@@ -58,12 +46,17 @@ def query_data(graph):
         }
     
     """
+    result_list = []
     for row in graph.query(q):
-        print(f'{row[0]}, {row[1]}')
+        # print(f'{row[0]}, {row[1]}')
+        print(row[0],row[1])
+        result_list.append((row[0],row[1]))
+    return result_list
+
 
 if __name__ == "__main__":
     data = make_fake_data()
-    query_data(data)
-
+    results = query_data(data)
+    print(results)
 
 

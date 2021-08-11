@@ -17,8 +17,17 @@ Upon encountering NE do:
 from rdflib import Namespace, Graph, Literal
 from rdflib.namespace import RDFS
 from make_data_and_query import make_fake_data, query_data
+import spacy
+import simple_ner
 
+def named_entity_linking(ne_label, ne_text, data):
+    label_with_text = zip(ne_label, ne_text)
+    for label, text in label_with_text:
+        query_data(data) % label  # TODO get operand thing to work
 
+if __name__ == '__main__':
+    nlp = spacy.load('en_core_web_sm')
+    entities = simple_ner.named_entity_recognition()
 
 
 
