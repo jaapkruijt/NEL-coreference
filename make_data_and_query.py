@@ -2,6 +2,7 @@
 from rdflib import Namespace, Graph, Literal
 from rdflib.namespace import RDFS
 
+
 # TODO: change instances to dates
 def make_fake_data():
     gaf = Namespace('http://groundedannotationframework.org/gaf#')
@@ -11,32 +12,32 @@ def make_fake_data():
     g.bind('gaf', gaf)
     jaap = leo.jaap
     jaap_2 = leo.jaap_2
-    tae = leo.tae
+    bart = leo.bart
     name_jaap = Literal("Jaap")
-    name_tae = Literal("Tae")
-    instance_1 = Literal("1")
-    instance_2 = Literal("2")
-    instance_56 = Literal("56")
+    name_bart = Literal("Bart")
+    instance_1 = Literal("12_08_2021")
+    instance_2 = Literal("05_07_2021")
+    instance_3 = Literal("08_08_2021")
     g.add((jaap, RDFS.label, name_jaap))
-    g.add((jaap, gaf.denotedBy, instance_1 ))
+    g.add((jaap, gaf.denotedBy, instance_1))
     g.add((jaap, gaf.denotedBy, instance_2))
-    g.add((jaap, gaf.denotedBy, instance_56))
+    g.add((jaap, gaf.denotedBy, instance_3))
     g.add((jaap_2, RDFS.label, name_jaap))
     g.add((jaap_2, gaf.denotedBy, instance_1))
-    g.add((tae, RDFS.label, name_tae))
-    g.add((tae, gaf.denotedBy, instance_2))
+    g.add((bart, RDFS.label, name_bart))
+    g.add((bart, gaf.denotedBy, instance_2))
     return g
 
 
 # TODO: change query to take in string
-def query_data(graph):
+def query_data(graph, q_param):
     q = """
         prefix gaf: <http://groundedannotationframework.org/gaf#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         
         select* {
         select ?ent (COUNT(DISTINCT ?e) as ?num_mentions) where{
-            ?ent rdfs:label "Jaap".
+            ?ent rdfs:label "%s".
             
             ?ent gaf:denotedBy ?e.
             }
@@ -47,16 +48,16 @@ def query_data(graph):
     
     """
     result_list = []
-    for row in graph.query(q):
-        # print(f'{row[0]}, {row[1]}')
-        print(row[0],row[1])
-        result_list.append((row[0],row[1]))
+    for row in graph.query(q % q_param):
+        uri = row[0][0:]
+        occurrences = row[1][0:]
+        result_list.append((uri, occurrences))
     return result_list
 
 
 if __name__ == "__main__":
     data = make_fake_data()
-    results = query_data(data)
+    results = query_data(data, "Bart")
     print(results)
 
 
