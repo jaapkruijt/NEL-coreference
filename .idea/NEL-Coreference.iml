@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
+    <content url="file://$MODULE_DIR$/../cltl-chatbots" />
     <orderEntry type="jdk" jdkName="Python 3.9 (NEL-coreference)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

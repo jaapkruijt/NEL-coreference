@@ -25,7 +25,7 @@ class NamedEntityLinker(BasicBrain):
 
         super(NamedEntityLinker, self).__init__(address, log_dir, clear_all, is_submodule=True)
 
-    # Problem: How are uri's defined right now in the brain? Is ambiguity taken into account?
+    # Problem: How are uri's defined right now in the brain? Is ambiguity taken into account? -->
     # Otherwise uri's are the same
     # E.g. if labels are firstname-lastname then query needs to be RE only looking at part before hyphen
 
