@@ -29,12 +29,16 @@ class NamedEntityLinker(BasicBrain):
     # Otherwise uri's are the same
     # E.g. if labels are firstname-lastname then query needs to be RE only looking at part before hyphen
 
-    def link_entities(self, ne_text, baseline='popularity'):
-        if baseline == 'popularity':
-            uri = self._get_most_popular(ne_text)
-        elif baseline == 'recency':
-            uri = self._get_most_recent(ne_text)
-        return uri
+    def link_entities(self, ne_list, baseline='popularity'):
+        uri_list = []
+        for ne_text in ne_list:
+            if baseline == 'popularity':
+                uri = self._get_most_popular(ne_text)
+                uri_list.append(uri)
+            elif baseline == 'recency':
+                uri = self._get_most_recent(ne_text)
+                uri_list.append(uri)
+        return uri_list
 
     def _get_most_popular(self, ne_text):
         query = read_query('/Users/jaapkruijt/Documents/GitHub/NEL-coreference/popularity') % ne_text
