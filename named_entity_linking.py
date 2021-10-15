@@ -18,6 +18,11 @@ from cltl.brain.utils import base_cases
 from cltl.brain.basic_brain import BasicBrain
 from cltl.brain.utils.helper_functions import read_query
 
+from cltl.brain.infrastructure.rdf_builder import RdfBuilder
+from rdflib import RDFS, Literal
+
+from tempfile import TemporaryDirectory
+
 
 class NamedEntityLinker(BasicBrain):
 
@@ -34,10 +39,10 @@ class NamedEntityLinker(BasicBrain):
         for ne_text in ne_list:
             if baseline == 'popularity':
                 uri = self._get_most_popular(ne_text)
-                uri_list.append(uri)
+                uri_list.append((uri, ne_text))
             elif baseline == 'recency':
                 uri = self._get_most_recent(ne_text)
-                uri_list.append(uri)
+                uri_list.append((uri, ne_text))
         return uri_list
 
     def _get_most_popular(self, ne_text):
@@ -51,13 +56,39 @@ class NamedEntityLinker(BasicBrain):
             pop_ordered.append((uri, occurrences))
         if pop_ordered:
             uri, popularity = pop_ordered[0]
-        # else:
-        #
+        else:
+            uri = []
         #     # TODO add functionality to add entity to graph
         return uri
 
     def _get_most_recent(self, ne_text):
         pass
+
+    def add_labels(self, capsule, uri=None):
+        ent_uri = self._rdf_builder.create_resource_uri('LW', capsule['subject']['id']) if not uri else uri
+        for label in capsule['labels']:
+            self.instance_graph.add((ent_uri, RDFS.label, Literal(label)))
+
+    def add_labels_2(self, identity, labels, uri=None):
+        ent_uri = self._rdf_builder.create_resource_uri('LW', identity) if not uri else uri
+        for label in labels:
+            self.instance_graph.add((ent_uri, RDFS.label, Literal(label)))
+
+    def update_brain(self):
+
+        data = self._serialize(self._brain_log())
+        code = self._upload_to_brain(data)
+
+
+if __name__ == "__main__":
+    import pathlib
+
+    log_path = pathlib.Path('./logs')
+    print(type(log_path))
+    nel = NamedEntityLinker(address="http://localhost:7200/repositories/sandbox",
+                            log_dir=log_path)
+    nel.add_labels_2('jaap_1', ['jaap', 'PhD', 'hij'])
+    nel.update_brain()
 
 
 

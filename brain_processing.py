@@ -1,5 +1,7 @@
 from emissor.representation.scenario import Modality, ImageSignal, TextSignal, Mention, Annotation, Scenario
 from cltl.combot.backend.api.discrete import UtteranceType
+from cltl.brain.infrastructure.rdf_builder import RdfBuilder
+from rdflib import RDFS
 from datetime import date
 from random import getrandbits
 import requests
@@ -12,7 +14,7 @@ def seq_to_text (seq):
     return text
 
 
-def scenario_utterance_to_capsule(scenario: Scenario, signal: TextSignal, author:str, perspective:str, subj: str, pred:str, obj:str):
+def scenario_utterance_to_capsule(scenario: Scenario, signal: TextSignal, author:str, perspective:dict, subj: str, pred:str, obj:str):
     place_id = getrandbits(8)
     location = requests.get("https://ipinfo.io").json()
 

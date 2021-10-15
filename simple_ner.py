@@ -17,6 +17,8 @@ import capsule_utils
 import driver_util as d_util
 import text_to_triple as ttt
 
+from rdflib.namespace import RDFS
+
 utt = "Hi this is Jaap and his father Bart"
 # Idea: can the system search for NP's in the surroundings of a NE, and remember those
 

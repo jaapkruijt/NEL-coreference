@@ -1,0 +1,11 @@
+@prefix leolaniTalk: <http://cltl.nl/leolani/talk/> .
+@prefix leolaniWorld: <http://cltl.nl/leolani/world/> .
+@prefix n2mu: <http://cltl.nl/leolani/n2mu/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+leolaniWorld:Instances {
+    n2mu:jaap_1 rdfs:label "PhD",
+            "hij",
+            "jaap" .
+}
+
