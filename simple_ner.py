@@ -11,36 +11,20 @@ from emissor.representation.container import Index
 from emissor.representation.scenario import Modality, ImageSignal, TextSignal, Mention, Annotation, Scenario
 import uuid
 import time
+from datetime import datetime
 
 # These modules are not included in NEL-coreference at the moment!! Won't work outside this machine
-import capsule_utils
-import driver_util as d_util
-import text_to_triple as ttt
+from src.chatbots.util import driver_util, capsule_util
+from src.chatbots.dummies import text_to_triple as ttt
 
 from rdflib.namespace import RDFS
 
-utt = "Hi this is Jaap and his father Bart"
+utt = "Carl likes Bart"
 # Idea: can the system search for NP's in the surroundings of a NE, and remember those
 
 # TODO Testing linking separate from NER (by e.g. using hashes and a dict) (NamedEntityRecognizer)
 
-# Make linking independent from ner function (so not nested inside the ner function but use its output), CHECK!
-# Updating the brain: a lot of it is already done automatically in the LTM update() function
-# If I do it here as well then it is done twice; what is the right way to approach this?
 # Using dummy triples that don't require an utterance?
-
-
-# def named_entity_recognition(utterance, nel: NamedEntityLinker):
-#     # processor_name = "spaCy"
-#
-#     doc = nlp(utterance)
-#
-#     # tokens = [token.text for token in doc]
-#
-#     # entity_label = [ent.label_ for ent in doc.ents]
-#     entity_text = [ent.text.lower() for ent in doc.ents]
-#
-#     return entity_text
 
 def add_ner_annotation(signal: TextSignal):
     processor_name = "spaCy"
@@ -68,35 +52,26 @@ def add_ner_annotation(signal: TextSignal):
 
 
 def utterance_processor(utterance, scenario, brain, author):
-    text_signal = d_util.create_text_signal(scenario, utterance)
-    # @TODO
-    ### Apply some processing to the text_signal and add annotations
+    text_signal = driver_util.create_text_signal(scenario, utterance)
+
     entity_text = add_ner_annotation(text_signal)
     scenario.append_signal(text_signal)
-    ## Post triples to the brain:
 
-    subj, pred, obj = ttt.getTriplesFromEntities(entity_text, text_signal.id)
-
-    response = {}
-    if not subj == "":
-        print('Subject:', subj, 'Predicate:', pred, 'Object:', obj)
-        perspective = {"certainty": 1, "polarity": 1, "sentiment": 1}
-
-        capsule = scenario_utterance_to_capsule(scenario, text_signal, author, perspective, subj, pred, obj)
-        # perspective is a dict instead of a str?
-
-        # print('Capsule:', capsule)
-        response = brain.update(capsule, reason_types=True)
-        # print(thoughts)
+    return entity_text
 
 
-def main(log_path):
+def main(log_path, utterance):
     nel = NamedEntityLinker(address="http://localhost:7200/repositories/sandbox",
                             log_dir=log_path)
-    entity_text = add_ner_annotation(utt)
+    scenario_path = './data'
+    scenario_id = 'test_scenario'
+    scenario_storage = driver_util.create_scenario(scenario_path, scenario_id)
+    scen = scenario_storage.create_scenario(scenario_id, datetime.now().microsecond, datetime.now().microsecond, 'AGENT')
+    entity_text = utterance_processor(utterance, scen, nel, 'Jaap')
 
     # link_entities expects a list with all entities in one
     # but the new ner gives a list with a single entity per utterance(?)
+
     entities = nel.link_entities(entity_text)
 
     return entities
@@ -105,5 +80,5 @@ def main(log_path):
 if __name__ == "__main__":
     nlp = spacy.load('en_core_web_sm')
     with TemporaryDirectory(prefix="brain-log") as log_path:
-        res = main(Path(log_path))
+        res = main(Path(log_path), utt)
         print(res)

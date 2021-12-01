@@ -1,0 +1,33 @@
+{
+  "context": "AGENT",
+  "id": "test_scenario",
+  "signals": {
+    "image": "./image.json",
+    "text": "./text.json"
+  },
+  "@context": {
+    "Scenario": "https://emissor.org#Scenario",
+    "id": "@id",
+    "context": "https://emissor.org#context",
+    "signals": "https://emissor.org#signals",
+    "ruler": "https://emissor.org#ruler"
+  },
+  "@type": "Scenario",
+  "ruler": {
+    "container_id": "test_scenario",
+    "start": 662994,
+    "end": 662999,
+    "@context": {
+      "TemporalRuler": "https://emissor.org#TemporalRuler",
+      "id": "@id",
+      "start": "https://emissor.org#start",
+      "end": "https://emissor.org#end",
+      "container_id": {
+        "@id": "https://emissor.org#container_id",
+        "@type": "@id"
+      }
+    },
+    "@type": "TemporalRuler",
+    "_py_type": "emissor.representation.container-TemporalRuler"
+  }
+}

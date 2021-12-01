@@ -16,23 +16,17 @@ Upon encountering NE do:
 
 from cltl.brain.utils import base_cases
 from cltl.brain.basic_brain import BasicBrain
+from cltl.brain.long_term_memory import LongTermMemory
 from cltl.brain.utils.helper_functions import read_query
 
 from cltl.brain.infrastructure.rdf_builder import RdfBuilder
 from rdflib import RDFS, Literal
 
-from tempfile import TemporaryDirectory
-
-
-class NamedEntityLinker(BasicBrain):
+class NamedEntityLinker(LongTermMemory):
 
     def __init__(self, address, log_dir, clear_all=False):
 
-        super(NamedEntityLinker, self).__init__(address, log_dir, clear_all, is_submodule=True)
-
-    # Problem: How are uri's defined right now in the brain? Is ambiguity taken into account? -->
-    # Otherwise uri's are the same
-    # E.g. if labels are firstname-lastname then query needs to be RE only looking at part before hyphen
+        super(NamedEntityLinker, self).__init__(address, log_dir, clear_all)
 
     def link_entities(self, ne_list, baseline='popularity'):
         uri_list = []
@@ -51,14 +45,15 @@ class NamedEntityLinker(BasicBrain):
         # print(response)
         pop_ordered = []
         for row in response:
+            print(row)
             uri = row['ent']['value']
             occurrences = row['num_mentions']['value']
             pop_ordered.append((uri, occurrences))
         if pop_ordered:
             uri, popularity = pop_ordered[0]
         else:
-            uri = []
-        #     # TODO add functionality to add entity to graph
+            uri_name = f'{ne_text}_1'
+            uri = self._rdf_builder.create_resource_uri('LW', uri_name)
         return uri
 
     def _get_most_recent(self, ne_text):
